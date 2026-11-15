@@ -216,17 +216,20 @@ kbd {
   width: 84px; height: 84px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35);
   background: rgba(217,80,63,0.82); color: #fff; font: 800 15px var(--font); touch-action: none;
 }
-#over, #menu, #win {
+#over, #menu, #win, #pause {
   position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px;
   background: rgba(5,10,6,0.74);
 }
-#over .card, #menu .card, #win .card {
+#over .card, #menu .card, #win .card, #pause .card {
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
   padding: 20px 26px; max-width: 380px; width: 100%; max-height: 100%; overflow-y: auto; text-align: center;
 }
 #over h2 { margin: 0 0 6px; font-size: 24px; font-weight: 800; color: #ff6b5e; }
+#pause { z-index: 42; background: rgba(3,7,4,0.88); }
+#pause .card { background: #0f1c14; }
+#pause h2 { margin: 0 0 6px; font-size: 26px; font-weight: 800; color: var(--accent); }
 #win h2 { margin: 0 0 6px; font-size: 26px; font-weight: 800; color: #8be28b; }
-#over p, #win p, #menu p { margin: 0 0 12px; font-size: 14px; line-height: 1.4; color: var(--ink); }
+#pause p, #over p, #win p, #menu p { margin: 0 0 12px; font-size: 14px; line-height: 1.4; color: var(--ink); }
 #menu { z-index: 40; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22420%22%20height%3D%22200%22%20viewBox%3D%220%200%20420%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20fill%3D%22%2307110a%22%3E%3Cpath%20d%3D%22M0%20200%20L22%2090%20L44%20200Z%20M10%20200%20L22%2060%20L34%20200Z%22%20/%3E%3Cpath%20d%3D%22M40%20200%20L62%2050%20L84%20200Z%20M50%20200%20L62%2020%20L74%20200Z%22%20/%3E%3Cpath%20d%3D%22M90%20200%20L112%20100%20L134%20200Z%20M100%20200%20L112%2070%20L124%20200Z%22%20/%3E%3Cpath%20d%3D%22M130%20200%20L152%2040%20L174%20200Z%20M140%20200%20L152%2010%20L164%20200Z%22%20/%3E%3Cpath%20d%3D%22M180%20200%20L202%2080%20L224%20200Z%20M190%20200%20L202%2050%20L214%20200Z%22%20/%3E%3Cpath%20d%3D%22M220%20200%20L242%2030%20L264%20200Z%20M230%20200%20L242%200%20L254%20200Z%22%20/%3E%3Cpath%20d%3D%22M270%20200%20L292%2095%20L314%20200Z%20M280%20200%20L292%2065%20L304%20200Z%22%20/%3E%3Cpath%20d%3D%22M310%20200%20L332%2055%20L354%20200Z%20M320%20200%20L332%2025%20L344%20200Z%22%20/%3E%3Cpath%20d%3D%22M360%20200%20L382%2085%20L404%20200Z%20M370%20200%20L382%2055%20L394%20200Z%22%20/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom / 420px 150px, radial-gradient(ellipse at 50% 25%, #25422b 0%, #10201a 55%, #060d09 100%); }
 #menu h1 { margin: 0 0 6px; font-size: 42px; font-weight: 800; letter-spacing: 0.02em; color: var(--accent); text-wrap: balance; }
 #menu { place-items: safe center; overflow-y: auto; }
@@ -235,7 +238,7 @@ kbd {
 #menu .card > * { position: relative; }
 #playBtn { font-size: 18px; padding: 13px 48px; }
 #menu .goal { font-size: 13px; opacity: 0.9; }
-#menu .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+#pause .row, #menu .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 #how, #net { position: absolute; inset: 0; z-index: 45; overflow-y: auto; background: linear-gradient(#0d1a12, #060d09); color: var(--ink); padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .howwrap { max-width: 920px; margin: 0 auto; }
 .howhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
@@ -270,9 +273,9 @@ kbd {
 .stats b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; color: var(--ink); }
 .stats span { display: block; font-size: 10.5px; opacity: 0.75; }
 .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-#playBtn, #winCont { font: 800 16px var(--font); color: #20160a; background: var(--accent); border: 0; border-radius: 999px; padding: 11px 34px; cursor: pointer; }
+#playBtn, #winCont, #resumeBtn { font: 800 16px var(--font); color: #20160a; background: var(--accent); border: 0; border-radius: 999px; padding: 11px 34px; cursor: pointer; }
 .ghost { font: 800 13px var(--font); color: var(--ink); background: rgba(232,239,214,0.1); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
-#playBtn:focus-visible, .ghost:focus-visible, #winCont:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+#playBtn:focus-visible, .ghost:focus-visible, #winCont:focus-visible, #resumeBtn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 #menuBtn { flex: none; width: 20px; height: 20px; border-radius: 50%; padding: 0; cursor: pointer; font: 800 11px var(--font); color: var(--ink); background: rgba(232,239,214,0.12); border: 1px solid var(--line); }
 .hrow .rbtn { display: flex; gap: 5px; }
 #goal { margin-top: 4px; font-size: 12px; font-weight: 800; color: #7fe0d0; font-variant-numeric: tabular-nums; }
@@ -430,7 +433,7 @@ kbd {
   <canvas id="cv" aria-label="Лес с поляной и домом. Персонаж управляется клавишами WASD или стрелками."></canvas>
   <div class="vignette"></div>
   <div class="hud">
-    <div class="hrow"><p id="clock">Сутки 1 · Утро, 09:00</p><span class="rbtn"><button id="helpBtn" type="button" aria-label="Управление" aria-expanded="true">?</button><button id="menuBtn" type="button" aria-label="Меню и пауза">☰</button></span></div>
+    <div class="hrow"><p id="clock">Сутки 1 · Утро, 09:00</p><span class="rbtn"><button id="helpBtn" type="button" aria-label="Как играть" aria-expanded="false">?</button><button id="menuBtn" type="button" aria-label="Пауза">☰</button></span></div>
     <div id="help">
       <p class="keys"><kbd>WASD</kbd> идти · <kbd>Shift</kbd> бег · <kbd>Пробел</kbd> удар/выстрел · <kbd>1</kbd>–<kbd>0</kbd> оружие · <kbd>R</kbd> перезарядка · <kbd>E</kbd> торговец · <kbd>G</kbd> ремонт · <kbd>H</kbd> лечение · <kbd>Z</kbd><kbd>X</kbd><kbd>C</kbd> бинт/аптечка/набор</p>
       <p class="touch-only">Джойстик — идти (до упора — бег), красная — удар, синяя — перезарядка, зелёная — лечение. Оружие и лекарства — внизу.</p>
@@ -515,7 +518,7 @@ kbd {
           <p>Монеты выпадают с бандитов, за зачистку лагеря даётся бонус. На монеты у торговца покупают оружие, патроны и лекарства.</p></section>
         <section><h3>Торговец</h3>
           <p>Появляется у ларька рядом с домом в первый день и затем каждый 10-й день. Подойдите и нажмите <kbd>E</kbd>. В магазине вкладки: холодное оружие, огнестрельное, патроны, лекарства.</p>
-          <p>Не тяните: торговец уходит, и до следующего раза придётся обходиться тем, что есть.</p></section>
+          <p>Все товары видны сразу, у каждого написана цена. Хватает монет — покупайте, ждать особого дня не нужно. Но торговец уходит перед ночью, и до следующего раза придётся обходиться тем, что есть.</p></section>
         <section><h3>Оружие</h3>
           <p><b>Холодное</b> бьёт вблизи и бесшумно. <b>Огнестрельное</b> бьёт далеко, но шумит: выстрелы слышат зомби и бандиты.</p>
           <p>У каждого ствола свой калибр и магазин: патроны подходят только своего калибра. Пустой магазин — перезарядка (<kbd>R</kbd>) занимает время. С расстоянием урон падает.</p>
@@ -576,6 +579,19 @@ kbd {
       </div>
       <p class="best" id="netTxt"></p>
       <p class="best" id="bestTxt"></p>
+    </div>
+  </div>
+  <div id="pause" hidden>
+    <div class="card">
+      <h2>Пауза</h2>
+      <p id="pauseNote">Игра остановлена.</p>
+      <button id="resumeBtn" type="button">Продолжить</button>
+      <div class="row">
+        <button id="pauseHow" class="ghost" type="button">Как играть</button>
+        <button id="pauseSound" class="ghost" type="button">Звук: вкл</button>
+        <button id="pauseNew" class="ghost" type="button">Начать заново</button>
+        <button id="pauseHome" class="ghost" type="button">В главное меню</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1647,14 +1663,14 @@ kbd {
   player.res = [0, 0, 0, 0]; player.mag = {}; player.rl = 0; player.rlW = -1; player.stam = 100; player.tired = false; player.bleed = 0; player.running = false;
   player.wood = 0; player.stone = 0; player.iron = 0; player.meds = [0, 0, 0];
 
-  var menuOpen = true, winOpen = false, started = false, won = false, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
+  var pauseOpen = false, menuOpen = true, winOpen = false, started = false, won = false, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
   var WIN_DAYS = 100, RADIO_TOTAL = 6;
   var mp = { room: null, host: true, myId: null, joinT: 0, others: [], gmap: {}, q: 0, ep: 0, lastEp: null, lastQ: -1, zid: 0, bid: 0, zmap: {}, bmap: {},
              sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
   var mpOn = false, curOwner = null, lastDeath = "", DIRS = ["left", "right", "up", "down"];
   function isGuest() { return mpOn && !mp.host; }
   var RADIO_NAMES = ["антенна", "динамик", "аккумулятор", "передатчик", "тюнер", "микрофон"];
-  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen; }
+  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen || pauseOpen || howBox.hidden === false; }
   try { muted = localStorage.getItem("forest.muted") === "1"; } catch (_) {}
   function getBest() { try { return +localStorage.getItem("forest.best") || 0; } catch (_) { return 0; } }
   function setBest(d) { try { if (d > getBest()) localStorage.setItem("forest.best", String(d)); } catch (_) {} }
@@ -1786,8 +1802,8 @@ kbd {
     if (w !== null && owned[+w]) player.weapon = +w;
     else if (m !== null) useMedIdx(+m);
   });
-  helpBtn.addEventListener("click", function () { helpEl.hidden = !helpEl.hidden; helpBtn.setAttribute("aria-expanded", helpEl.hidden ? "false" : "true"); });
-  setTimeout(function () { helpEl.hidden = true; helpBtn.setAttribute("aria-expanded", "false"); }, 14000);
+  helpBtn.addEventListener("click", function () { openHow(); });
+  setTimeout(function () { helpEl.hidden = true; }, 14000);
   healBtn.addEventListener("click", useMed);
 
   // ----- еда: ягодные кусты, грибы, яблони, кролики -----
@@ -1853,7 +1869,7 @@ kbd {
   var STALL = { x: CX + 86, y: CY + 98 };
   var merchant = { state: "gone", x: MPOS.x, y: MPOS.y, phase: 0, dir: "down" };
   function merchantDay(d) { return d === 1 || d % 10 === 0; }
-  function shopTier(d) { return d === 1 ? 1 : Math.min(WEAPONS.length - 1, Math.floor(d / 10) + 1); }
+  function shopTier(d) { return 99; }  // все товары доступны сразу, ограничивают только деньги
   function dayForTier(t) { return t <= 1 ? 1 : (t - 1) * 10; }
   function initMerchant(d, within) {
     merchant.state = merchantDay(d) && within < 48 ? "idle" : "gone";
@@ -1983,6 +1999,8 @@ kbd {
   addEventListener("keydown", function (e) {
     if (e.repeat) return;
     if (menuOpen) { if (e.code === "Escape") { if (!howBox.hidden) closeHow(); else if (!netScreen.hidden) closeNet(); else if (started) closeMenu(); } return; }
+    if (pauseOpen) { if (e.code === "Escape") { if (!howBox.hidden) closeHow(); else closePause(); } return; }
+    if (howBox.hidden === false) { if (e.code === "Escape") closeHow(); return; }
     if (winOpen) return;
     if (e.code === "KeyE") { if (shopOpen) closeShop(); else openShop(); }
     else if (e.code === "KeyG") { if (repairOpen) closeRepair(); else openRepair(); }
@@ -1991,7 +2009,7 @@ kbd {
     else if (e.code === "KeyQ" && !uiOpen()) cycleWeapon();
     else if (/^Digit\d$/.test(e.code) && !uiOpen() && !dead) equipNth(e.code === "Digit0" ? 10 : +e.code.charAt(5));
     else if (e.code === "KeyZ" || e.code === "KeyX" || e.code === "KeyC") useMedIdx("ZXC".indexOf(e.code.charAt(3)));
-    else if (e.code === "Escape") { if (shopOpen || repairOpen) { closeShop(); closeRepair(); } else if (!dead) openMenu(); }
+    else if (e.code === "Escape") { if (shopOpen || repairOpen) { closeShop(); closeRepair(); } else if (!dead) openPause(); }
   });
 
   function addPopup(px, py, text, color) { popups.push({ x: px, y: py, t: 0, text: text, color: color }); }
@@ -2722,7 +2740,7 @@ kbd {
       st(kills, "зомби убито") + st(banditKills, "бандитов убито") + st(Math.max(getBest(), 0), "рекорд, суток");
   }
   function win(dayNo) {
-    won = true; winOpen = true; setBest(dayNo - 1);
+    won = true; winOpen = true; if (pauseOpen) closePause(); setBest(dayNo - 1);
     for (var k in keys) keys[k] = false;
     winTxt.textContent = "Радио собрано, сигнал принят: на " + (dayNo - 1) + "-е сутки за вами прилетел вертолёт. Вы выжили!";
     winStats.innerHTML = statsHtml(dayNo);
@@ -2751,19 +2769,48 @@ kbd {
     if (!newArmed) { newArmed = true; newBtn.textContent = "Точно? Нажмите ещё раз"; return; }
     resetGame(); closeMenu();
   });
-  howBtn.addEventListener("click", function () { howBox.hidden = false; howBtn.setAttribute("aria-expanded", "true"); try { howBack.focus(); } catch (_) {} });
-  function closeHow() { howBox.hidden = true; howBtn.setAttribute("aria-expanded", "false"); try { howBtn.focus(); } catch (_) {} }
+  function openHow() { howBox.hidden = false; howBtn.setAttribute("aria-expanded", "true"); for (var k in keys) keys[k] = false; try { howBack.focus(); } catch (_) {} }
+  howBtn.addEventListener("click", openHow);
+  function closeHow() { howBox.hidden = true; howBtn.setAttribute("aria-expanded", "false"); last = performance.now(); try { (pauseOpen ? pauseHow : howBtn).focus(); } catch (_) {} }
   howBack.addEventListener("click", closeHow);
   soundBtn.addEventListener("click", function () {
     muted = !muted; try { localStorage.setItem("forest.muted", muted ? "1" : "0"); } catch (_) {}
     soundBtn.textContent = muted ? "Звук: выкл" : "Звук: вкл";
   });
-  menuBtn.addEventListener("click", function () { if (!dead && !winOpen && !menuOpen) { closeShop(); closeRepair(); openMenu(); } });
+  // ----- пауза -----
+  var pauseEl = $("pause"), resumeBtn = $("resumeBtn"), pauseHow = $("pauseHow"), pauseSound = $("pauseSound"), pauseNew = $("pauseNew"), pauseHome = $("pauseHome"), pauseNote = $("pauseNote"),
+      pNewArmed = false, pHomeArmed = false;
+  function pauseText() {
+    pauseSound.textContent = muted ? "Звук: выкл" : "Звук: вкл";
+    pauseNew.hidden = mpOn; pauseNew.textContent = pNewArmed ? "Точно? Нажмите ещё раз" : "Начать заново";
+    pauseHome.textContent = pHomeArmed ? "Точно? Нажмите ещё раз" : "В главное меню";
+    pauseNote.textContent = mpOn ? "В сетевой игре мир не останавливается — остальные игроки продолжают играть." : "Игра остановлена.";
+  }
+  function openPause() {
+    if (dead || winOpen || menuOpen || pauseOpen) return;
+    closeShop(); closeRepair();
+    pauseOpen = true; pauseEl.hidden = false; pNewArmed = false; pHomeArmed = false; pauseText();
+    for (var k in keys) keys[k] = false;
+    try { resumeBtn.focus(); } catch (_) {}
+  }
+  function closePause() { pauseOpen = false; pauseEl.hidden = true; last = performance.now(); }
+  menuBtn.addEventListener("click", openPause);
+  resumeBtn.addEventListener("click", closePause);
+  pauseHow.addEventListener("click", openHow);
+  pauseSound.addEventListener("click", function () { soundBtn.click(); pauseText(); });
+  pauseNew.addEventListener("click", function () {
+    if (!pNewArmed) { pNewArmed = true; pHomeArmed = false; pauseText(); return; }
+    pNewArmed = false; resetGame(); closePause();
+  });
+  pauseHome.addEventListener("click", function () {
+    if (!pHomeArmed) { pHomeArmed = true; pNewArmed = false; pauseText(); return; }
+    pHomeArmed = false; pauseOpen = false; pauseEl.hidden = true; toHome();
+  });
   overMenu.addEventListener("click", toHome);
   winMenu.addEventListener("click", function () { winOpen = false; winEl.hidden = true; toHome(); });
   winCont.addEventListener("click", function () { winOpen = false; winEl.hidden = true; });
   function die(dayNo, reason) {
-    dead = true; closeShop(); closeRepair(); lastDeath = reason;
+    dead = true; closeShop(); closeRepair(); if (pauseOpen) closePause(); lastDeath = reason;
     var TT = { house: "Дом разрушен", bandit: "Вас убили бандиты", hunger: "Вы умерли от голода", zombie: "Вас убили зомби" };
     overTitle.textContent = TT[reason] || "Вы погибли";
     var RT = { house: "Зомби разрушили дом.", bandit: "Бандиты оказались сильнее.", hunger: "Вы не нашли еды вовремя.", zombie: "Ночь оказалась слишком длинной." };
