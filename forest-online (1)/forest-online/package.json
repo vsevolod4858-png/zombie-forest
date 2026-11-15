@@ -1,0 +1,9 @@
+{
+  "name": "forest-survival-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Игра «Выжить в лесу» и сервер комнат",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
