@@ -216,20 +216,32 @@ kbd {
   width: 84px; height: 84px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.35);
   background: rgba(217,80,63,0.82); color: #fff; font: 800 15px var(--font); touch-action: none;
 }
-#over, #menu, #win, #pause {
+#over, #menu, #win, #pause, #lobby {
   position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: 16px;
   background: rgba(5,10,6,0.74);
 }
-#over .card, #menu .card, #win .card, #pause .card {
+#over .card, #menu .card, #win .card, #pause .card, #lobby .card {
   background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
   padding: 20px 26px; max-width: 380px; width: 100%; max-height: 100%; overflow-y: auto; text-align: center;
 }
 #over h2 { margin: 0 0 6px; font-size: 24px; font-weight: 800; color: #ff6b5e; }
+#lobby { z-index: 41; background: rgba(3,7,4,0.92); }
+#lobby .card { background: #0f1c14; max-width: 420px; }
+#lobby h2 { margin: 0 0 2px; font-size: 22px; font-weight: 800; color: var(--accent); }
+#lobby .lkind { margin: 0 0 8px; font-size: 13px; opacity: 0.8; }
+#lobby .lcode { margin: 0 0 4px; font: 800 38px var(--font); letter-spacing: 0.3em; text-indent: 0.3em; color: var(--ink); user-select: all; }
+#lobby .lhint { margin: 0 0 10px; font-size: 12px; opacity: 0.7; }
+#lobby .lcount { margin: 0 0 6px; font-size: 13px; font-weight: 800; color: var(--accent); }
+#lobbyList { margin: 0 0 12px; text-align: left; max-height: 36vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; padding: 2px 12px; }
+#lobbyList .lp { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; font-weight: 700; }
+#lobbyList .lp:first-child { border-top: 0; }
+#lobbyList .lp i { font-style: normal; font-weight: 800; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); align-self: center; white-space: nowrap; }
+#lobby .lwait { margin: 0 0 12px; font-size: 13px; color: var(--accent); font-weight: 800; }
 #pause { z-index: 42; background: rgba(3,7,4,0.88); }
 #pause .card { background: #0f1c14; }
 #pause h2 { margin: 0 0 6px; font-size: 26px; font-weight: 800; color: var(--accent); }
 #win h2 { margin: 0 0 6px; font-size: 26px; font-weight: 800; color: #8be28b; }
-#pause p, #over p, #win p, #menu p { margin: 0 0 12px; font-size: 14px; line-height: 1.4; color: var(--ink); }
+#lobby p, #pause p, #over p, #win p, #menu p { margin: 0 0 12px; font-size: 14px; line-height: 1.4; color: var(--ink); }
 #menu { z-index: 40; background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22420%22%20height%3D%22200%22%20viewBox%3D%220%200%20420%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Cg%20fill%3D%22%2307110a%22%3E%3Cpath%20d%3D%22M0%20200%20L22%2090%20L44%20200Z%20M10%20200%20L22%2060%20L34%20200Z%22%20/%3E%3Cpath%20d%3D%22M40%20200%20L62%2050%20L84%20200Z%20M50%20200%20L62%2020%20L74%20200Z%22%20/%3E%3Cpath%20d%3D%22M90%20200%20L112%20100%20L134%20200Z%20M100%20200%20L112%2070%20L124%20200Z%22%20/%3E%3Cpath%20d%3D%22M130%20200%20L152%2040%20L174%20200Z%20M140%20200%20L152%2010%20L164%20200Z%22%20/%3E%3Cpath%20d%3D%22M180%20200%20L202%2080%20L224%20200Z%20M190%20200%20L202%2050%20L214%20200Z%22%20/%3E%3Cpath%20d%3D%22M220%20200%20L242%2030%20L264%20200Z%20M230%20200%20L242%200%20L254%20200Z%22%20/%3E%3Cpath%20d%3D%22M270%20200%20L292%2095%20L314%20200Z%20M280%20200%20L292%2065%20L304%20200Z%22%20/%3E%3Cpath%20d%3D%22M310%20200%20L332%2055%20L354%20200Z%20M320%20200%20L332%2025%20L344%20200Z%22%20/%3E%3Cpath%20d%3D%22M360%20200%20L382%2085%20L404%20200Z%20M370%20200%20L382%2055%20L394%20200Z%22%20/%3E%3C/g%3E%3C/svg%3E") repeat-x bottom / 420px 150px, radial-gradient(ellipse at 50% 25%, #25422b 0%, #10201a 55%, #060d09 100%); }
 #menu h1 { margin: 0 0 6px; font-size: 42px; font-weight: 800; letter-spacing: 0.02em; color: var(--accent); text-wrap: balance; }
 #menu { place-items: safe center; overflow-y: auto; }
@@ -238,7 +250,7 @@ kbd {
 #menu .card > * { position: relative; }
 #playBtn { font-size: 18px; padding: 13px 48px; }
 #menu .goal { font-size: 13px; opacity: 0.9; }
-#pause .row, #menu .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+#lobby .row, #pause .row, #menu .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 #how, #net { position: absolute; inset: 0; z-index: 45; overflow-y: auto; background: linear-gradient(#0d1a12, #060d09); color: var(--ink); padding-block: 16px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .howwrap { max-width: 920px; margin: 0 auto; }
 .howhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
@@ -273,9 +285,9 @@ kbd {
 .stats b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; color: var(--ink); }
 .stats span { display: block; font-size: 10.5px; opacity: 0.75; }
 .btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-#playBtn, #winCont, #resumeBtn { font: 800 16px var(--font); color: #20160a; background: var(--accent); border: 0; border-radius: 999px; padding: 11px 34px; cursor: pointer; }
+#playBtn, #winCont, #resumeBtn, #lobbyPlay { font: 800 16px var(--font); color: #20160a; background: var(--accent); border: 0; border-radius: 999px; padding: 11px 34px; cursor: pointer; }
 .ghost { font: 800 13px var(--font); color: var(--ink); background: rgba(232,239,214,0.1); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
-#playBtn:focus-visible, .ghost:focus-visible, #winCont:focus-visible, #resumeBtn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+#playBtn:focus-visible, .ghost:focus-visible, #winCont:focus-visible, #resumeBtn:focus-visible, #lobbyPlay:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 #menuBtn { flex: none; width: 20px; height: 20px; border-radius: 50%; padding: 0; cursor: pointer; font: 800 11px var(--font); color: var(--ink); background: rgba(232,239,214,0.12); border: 1px solid var(--line); }
 .hrow .rbtn { display: flex; gap: 5px; }
 #goal { margin-top: 4px; font-size: 12px; font-weight: 800; color: #7fe0d0; font-variant-numeric: tabular-nums; }
@@ -498,7 +510,8 @@ kbd {
     <div class="howwrap">
       <div class="howhead"><h1>Как играть</h1><button id="howBack" class="ghost" type="button">← Назад</button></div>
       <section class="goalbox"><h3>Цель игры</h3>
-        <p>Выжить <b>100 суток</b> и собрать <b>6 частей радио</b>. Каждая часть лежит в одном из шести лагерей бандитов. Когда у вас есть все части и прошло 100 суток, за вами прилетает вертолёт — это победа. Сутки длятся 2 минуты: минута дня и минута ночи, то есть вся игра — около 200 минут.</p></section>
+        <p>Выжить <b>100 суток</b> и собрать <b>6 частей радио</b>. Каждая часть лежит в одном из шести лагерей бандитов. Когда у вас есть все части и прошло 100 суток, за вами прилетает вертолёт — это победа. Сутки длятся 2 минуты: минута дня и минута ночи, то есть вся игра — около 200 минут.</p>
+        <p>После победы можно <b>продолжить играть</b>: игра не кончается, а лагеря бандитов обновляются каждые 3–4 суток, и их снова можно зачищать ради монет и патронов.</p></section>
       <div class="howgrid">
         <section><h3>Управление</h3>
           <p><kbd>WASD</kbd> — идти, <kbd>Shift</kbd> — бег, <kbd>Пробел</kbd> — удар или выстрел.</p>
@@ -579,6 +592,19 @@ kbd {
       </div>
       <p class="best" id="netTxt"></p>
       <p class="best" id="bestTxt"></p>
+    </div>
+  </div>
+  <div id="lobby" hidden>
+    <div class="card">
+      <h2>Комната ожидания</h2>
+      <p class="lkind" id="lobbyKind"></p>
+      <p class="lcode" id="lobbyCode">·····</p>
+      <p class="lhint">Код комнаты — отправьте его друзьям</p>
+      <p class="lcount" id="lobbyCount"></p>
+      <div id="lobbyList"></div>
+      <p class="lwait" id="lobbyWait">Подключение…</p>
+      <button id="lobbyPlay" type="button" hidden>Играть</button>
+      <div class="row"><button id="lobbyLeave" class="ghost" type="button">Выйти из комнаты</button></div>
     </div>
   </div>
   <div id="pause" hidden>
@@ -1663,14 +1689,14 @@ kbd {
   player.res = [0, 0, 0, 0]; player.mag = {}; player.rl = 0; player.rlW = -1; player.stam = 100; player.tired = false; player.bleed = 0; player.running = false;
   player.wood = 0; player.stone = 0; player.iron = 0; player.meds = [0, 0, 0];
 
-  var pauseOpen = false, menuOpen = true, winOpen = false, started = false, won = false, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
+  var pauseOpen = false, menuOpen = true, winOpen = false, started = false, won = false, nextRaid = 0, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
   var WIN_DAYS = 100, RADIO_TOTAL = 6;
   var mp = { room: null, host: true, myId: null, joinT: 0, others: [], gmap: {}, q: 0, ep: 0, lastEp: null, lastQ: -1, zid: 0, bid: 0, zmap: {}, bmap: {},
-             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
+             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, started: false, seenPeer: false, hostId: null, lsig: "", joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
   var mpOn = false, curOwner = null, lastDeath = "", DIRS = ["left", "right", "up", "down"];
   function isGuest() { return mpOn && !mp.host; }
   var RADIO_NAMES = ["антенна", "динамик", "аккумулятор", "передатчик", "тюнер", "микрофон"];
-  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen || pauseOpen || howBox.hidden === false; }
+  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen || pauseOpen || howBox.hidden === false || (mpOn && !mp.started); }
   try { muted = localStorage.getItem("forest.muted") === "1"; } catch (_) {}
   function getBest() { try { return +localStorage.getItem("forest.best") || 0; } catch (_) { return 0; } }
   function setBest(d) { try { if (d > getBest()) localStorage.setItem("forest.best", String(d)); } catch (_) {} }
@@ -2000,6 +2026,7 @@ kbd {
     if (e.repeat) return;
     if (menuOpen) { if (e.code === "Escape") { if (!howBox.hidden) closeHow(); else if (!netScreen.hidden) closeNet(); else if (started) closeMenu(); } return; }
     if (pauseOpen) { if (e.code === "Escape") { if (!howBox.hidden) closeHow(); else closePause(); } return; }
+    if (mpOn && !mp.started) { if (e.code === "Escape") lobbyLeaveClick(); return; }
     if (howBox.hidden === false) { if (e.code === "Escape") closeHow(); return; }
     if (winOpen) return;
     if (e.code === "KeyE") { if (shopOpen) closeShop(); else openShop(); }
@@ -2409,7 +2436,7 @@ kbd {
   function activateNext(prefix) {
     var idle = [];
     bases.forEach(function (b) { if (b.state === "idle") idle.push(b); });
-    if (!idle.length) { showNotice((prefix || "") + "Все базы бандитов зачищены! Они больше не вернутся.", true); return; }
+    if (!idle.length) { showNotice((prefix || "") + (won ? "Все лагеря бандитов зачищены. Новые бандиты вернутся через " + Math.max(1, nextRaid - curDay) + " сут." : "Все базы бандитов зачищены! Они больше не вернутся."), true); return; }
     var b = idle[Math.floor(Math.random() * idle.length)];
     b.state = "active"; b.order = clearedCount; b.alert = false;
     b.gun = BANDIT_GUNS[Math.min(b.order, BANDIT_GUNS.length - 1)];
@@ -2427,7 +2454,7 @@ kbd {
       placed++;
     }
     b.total = placed;
-    showNotice((prefix || "") + "Отмечена база " + (clearedCount + 1) + " из " + bases.length + ": бандитов " + placed + ", оружие — " + b.gun.name.toLowerCase() + ". Бандиты не выходят за красную черту и не видят вас за ней.", true);
+    showNotice((prefix || "") + (won ? "Бандиты вернулись в лагерь: бандитов " : "Отмечена база " + (clearedCount + 1) + " из " + bases.length + ": бандитов ") + placed + ", оружие — " + b.gun.name.toLowerCase() + ". Бандиты не выходят за красную черту и не видят вас за ней.", true);
   }
 
   // часть радио появляется в лагере после зачистки
@@ -2477,13 +2504,21 @@ kbd {
     ctx.restore();
   }
 
+  // после победы лагеря бандитов обновляются раз в 3–4 суток
+  function raidRefresh(dayNo) {
+    nextRaid = dayNo + 3 + (dayNo % 2);
+    bandits = []; ebullets = []; mp.bmap = {};
+    bases.forEach(function (b) { b.state = "idle"; b.order = -1; b.gun = null; b.alert = false; b.part = null; b.total = 0; });
+    clearedCount = 3;
+    activateNext("Лагеря бандитов обновились. ");
+  }
   function clearBase(base) {
     base.state = "cleared"; base.alert = false; clearedCount++;
     var bonus = 100 * clearedCount;
     player.coins += bonus;
     addPopup(player.x, player.y, "База зачищена! +" + bonus, "#8be28b");
     if (mpOn) mpSend({ k: "loot", to: "*", c: bonus, cal: -1, a: 0, t: "base", x: Math.round(base.x), y: Math.round(base.y) });
-    spawnPart(base);
+    if (!won) spawnPart(base);
     activateNext("База зачищена, +" + bonus + " монет. ");
   }
 
@@ -2736,13 +2771,13 @@ kbd {
 
   function statsHtml(dayNo) {
     function st(n, l) { return "<div><b>" + n + "</b><span>" + l + "</span></div>"; }
-    return st(Math.max(0, dayNo - 1) + "/" + WIN_DAYS, "суток прожито") + st(radio + "/" + RADIO_TOTAL, "частей радио") + st(clearedCount + "/" + bases.length, "лагерей зачищено") +
+    return st(won ? Math.max(0, dayNo - 1) : Math.max(0, dayNo - 1) + "/" + WIN_DAYS, "суток прожито") + st(radio + "/" + RADIO_TOTAL, "частей радио") + st(clearedCount + "/" + bases.length, "лагерей зачищено") +
       st(kills, "зомби убито") + st(banditKills, "бандитов убито") + st(Math.max(getBest(), 0), "рекорд, суток");
   }
   function win(dayNo) {
-    won = true; winOpen = true; if (pauseOpen) closePause(); setBest(dayNo - 1);
+    won = true; winOpen = true; nextRaid = dayNo + 3 + (dayNo % 2); if (pauseOpen) closePause(); setBest(dayNo - 1);
     for (var k in keys) keys[k] = false;
-    winTxt.textContent = "Радио собрано, сигнал принят: на " + (dayNo - 1) + "-е сутки за вами прилетел вертолёт. Вы выжили!";
+    winTxt.textContent = "Радио собрано, сигнал принят: на " + (dayNo - 1) + "-е сутки за вами прилетел вертолёт. Вы выжили! Можно продолжить игру: лагеря бандитов будут обновляться каждые 3–4 суток.";
     winStats.innerHTML = statsHtml(dayNo);
     winEl.hidden = false;
     try { winCont.focus(); } catch (_) {}
@@ -2787,7 +2822,7 @@ kbd {
     pauseNote.textContent = mpOn ? "В сетевой игре мир не останавливается — остальные игроки продолжают играть." : "Игра остановлена.";
   }
   function openPause() {
-    if (dead || winOpen || menuOpen || pauseOpen) return;
+    if (dead || winOpen || menuOpen || pauseOpen || (mpOn && !mp.started)) return;
     closeShop(); closeRepair();
     pauseOpen = true; pauseEl.hidden = false; pNewArmed = false; pHomeArmed = false; pauseText();
     for (var k in keys) keys[k] = false;
@@ -2845,7 +2880,7 @@ kbd {
     rabbits = []; rabbitTimer = 0;
     for (var ri = 0; ri < 22; ri++) spawnRabbit(true);
     initMerchant(1, START_T); curDay = 1;
-    radio = 0; won = false; winOpen = false; winEl.hidden = true; endedNote = false; lastGoal = "";
+    radio = 0; won = false; nextRaid = 0; winOpen = false; winEl.hidden = true; endedNote = false; lastGoal = "";
     bases.forEach(function (b) { b.part = null; });
   }
   function resetGame() { resetPlayer(); resetWorld(); }
@@ -2918,7 +2953,7 @@ kbd {
     if (mpOn) return false;
     var cl = window.claude;
     if (!cl || !cl.use) { netMsg.textContent = "Сеть недоступна: откройте игру по ссылке в Claude."; return false; }
-    mpOn = true; mp.joinT = Date.now(); mp.host = true; mp.others = []; mp.gmap = {}; mp.hasSnap = false; mp.lastEp = null; mp.lastQ = -1; mp.houseWas = 1;
+    mpOn = true; mp.joinT = Date.now(); mp.host = true; mp.others = []; mp.gmap = {}; mp.hasSnap = false; mp.lastEp = null; mp.lastQ = -1; mp.houseWas = 1; mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = "";
     mp.code = o.code; mp.rname = o.name; mp.creating = !!o.create; mp.joinWait = 0;
     mp.meta = { max: o.create ? o.max : 10, pub: !!o.pub, title: o.title || "" };
     netMsg.textContent = "Подключение к комнате…";
@@ -2936,13 +2971,18 @@ kbd {
       mp.unsub.push(nr.onPeers(mpRefresh));
       mp.unsub.push(nr.on("ev", onEv));
       mp.sendT = 0; mp.advT = 0; mp.joinWait = o.create ? 0 : performance.now();
-      mpTick(0); mpRefresh();
+      mpTick(0); mpRefresh(); renderLobby();
       if (menuOpen) updateMenuText();
       showNotice(o.create ? "Комната создана. Код: " + o.code + (o.pub ? " (публичная)" : " (приватная) — отправьте его друзьям.") + " Игроков до " + o.max + "." : "Вы вошли в комнату " + o.code + ".");
     }).catch(function () { mpFail("Не удалось войти в комнату."); });
     return true;
   }
-  function mpFail(t) { mpStop(); showNotice(t); netMsg.textContent = t; }
+  function mpFail(t) {
+    var inLobby = mpOn && !mp.started;
+    mpStop();
+    if (inLobby) { resetGame(); started = false; openMenu(); openNet(); }
+    showNotice(t); netMsg.textContent = t;
+  }
   function mpStop() {
     var wasGuest = isGuest(), room = mp.room;
     mpOn = false;
@@ -2950,6 +2990,7 @@ kbd {
     if (room) { try { var lp = room.leave(); if (lp && lp.catch) lp.catch(function () {}); } catch (_) {} }
     if (mp.lobby && mp.adv) { try { var pp = mp.lobby.presence({ lb: null }); if (pp && pp.catch) pp.catch(function () {}); } catch (_) {} }
     mp.adv = false; mp.room = null; mp.others = []; mp.gmap = {}; mp.host = true; mp.hasSnap = false; mp.code = ""; mp.joinWait = 0;
+    mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = ""; lobbyEl.hidden = true; lobbyLeaveArmed = false;
     if (wasGuest) { resetWorld(); gt = 0; }
   }
 
@@ -2960,13 +3001,13 @@ kbd {
     for (var i = 0; i < list.length; i++) {
       var lb = list[i].presence && list[i].presence.lb;
       if (!lb || typeof lb.r !== "string" || !/^r[A-Z0-9]{5}$/.test(lb.r) || seen[lb.r]) continue;
-      seen[lb.r] = 1; rows.push({ r: lb.r, t: String(lb.t || "").slice(0, 20), n: lb.n | 0, m: Math.max(2, Math.min(10, lb.m | 0)) });
+      seen[lb.r] = 1; rows.push({ r: lb.r, g: lb.g ? 1 : 0, t: String(lb.t || "").slice(0, 20), n: lb.n | 0, m: Math.max(2, Math.min(10, lb.m | 0)) });
     }
     roomList.textContent = "";
     rows.forEach(function (x) {
       var row = document.createElement("div"); row.className = "rrow";
       var nm = document.createElement("span"); nm.className = "rn"; nm.textContent = x.t || ("Комната " + x.r.slice(1));
-      var ct = document.createElement("span"); ct.className = "rc"; ct.textContent = x.n + "/" + x.m;
+      var ct = document.createElement("span"); ct.className = "rc"; ct.textContent = (x.g ? "в игре · " : "ждут · ") + x.n + "/" + x.m;
       var bt = document.createElement("button"); bt.className = "ghost"; bt.type = "button"; bt.textContent = x.n >= x.m ? "Полная" : "Войти"; bt.disabled = x.n >= x.m;
       bt.addEventListener("click", function () { enterRoom(x.r.slice(1), false); });
       row.appendChild(nm); row.appendChild(ct); row.appendChild(bt); roomList.appendChild(row);
@@ -2996,7 +3037,7 @@ kbd {
     var o = create ? { create: true, code: code, name: "r" + code, pub: netCfg.pub, max: netCfg.max,
                        title: (roomTitle.value || "").trim().slice(0, 20) || ("Комната " + code) }
                    : { create: false, code: code, name: "r" + code };
-    if (mpStart(o)) { closeNet(); closeMenu(); }
+    if (mpStart(o)) { resetGame(); gt = 0; closeNet(); closeMenu(); renderLobby(); }
   }
   var netCfg = { pub: true, max: 4 };
   function syncNetUi() {
@@ -3035,7 +3076,7 @@ kbd {
     var seen = {}; others.forEach(function (o) { seen[o.peer] = 1; });
     Object.keys(mp.gmap).forEach(function (k) { if (!seen[k]) delete mp.gmap[k]; });
     others.forEach(function (o, n) { o.idx = n + 1; });
-    mp.others = others;
+    mp.others = others; if (others.length) mp.seenPeer = true;
     var me = { id: mp.myId || "~me", j: mp.joinT }, best = me;
     cand.forEach(function (c) { if (c.j < best.j || (c.j === best.j && c.id < best.id)) best = c; });
     var iAmHost = best === me;
@@ -3046,13 +3087,58 @@ kbd {
       cand.forEach(function (c) { if (c.j < me.j || (c.j === me.j && c.id < me.id)) rank++; });
       if (rank >= mp.meta.max) { mpFail("Комната заполнена (" + mp.meta.max + " игроков)."); return; }
     }
+    mp.hostId = iAmHost ? null : best.id;
     if (iAmHost !== mp.host) mpSwitch(iAmHost);
-    if (!mp.host && best.g && best.g.pr && best.g.pr.s) {
+    if (!mp.host && !mp.started && best.g && best.g.pr && best.g.pr.go) mpBegin();
+    if (!mp.host && mp.started && best.g && best.g.pr && best.g.pr.s) {
       var sn = best.g.pr.s;
       if (sn.q !== mp.lastQ) { mp.lastQ = sn.q; applySnap(sn); }
     }
     if (menuOpen) updateMenuText();
+    renderLobby();
   }
+  // ----- комната ожидания -----
+  var lobbyEl = $("lobby"), lobbyKind = $("lobbyKind"), lobbyCode = $("lobbyCode"), lobbyCount = $("lobbyCount"), lobbyList = $("lobbyList"),
+      lobbyWait = $("lobbyWait"), lobbyPlay = $("lobbyPlay"), lobbyLeave = $("lobbyLeave"), lobbyLeaveArmed = false;
+  function renderLobby() {
+    if (!mpOn || mp.started) { lobbyEl.hidden = true; return; }
+    lobbyEl.hidden = false;
+    var canPlay = mp.host && (mp.creating || mp.seenPeer);
+    var rows = [{ n: mp.name || "Вы", j: mp.joinT, me: true, host: mp.host }], i, o;
+    for (i = 0; i < mp.others.length; i++) { o = mp.others[i]; rows.push({ n: o.n || "Игрок", j: o.j || 0, me: false, host: !mp.host && o.peer === mp.hostId }); }
+    rows.sort(function (a, b) { return a.j - b.j; });
+    var sig = rows.map(function (r) { return r.n + "|" + (r.host ? 1 : 0) + (r.me ? 1 : 0); }).join(",") + "#" + mp.code + mp.meta.max + (mp.meta.pub ? 1 : 0) + (canPlay ? 1 : 0) + (lobbyLeaveArmed ? 1 : 0) + mp.seenPeer;
+    if (sig === mp.lsig) return;
+    mp.lsig = sig;
+    lobbyKind.textContent = (mp.meta.pub ? "Публичная" : "Приватная") + " комната" + (mp.meta.title ? " · " + mp.meta.title : "");
+    lobbyCode.textContent = mp.code || "·····";
+    lobbyCount.textContent = "Игроков: " + rows.length + " из " + mp.meta.max;
+    lobbyList.textContent = "";
+    rows.forEach(function (r) {
+      var row = document.createElement("div"); row.className = "lp";
+      var nm = document.createElement("span"); nm.textContent = r.n + (r.me ? " (вы)" : ""); row.appendChild(nm);
+      if (r.host) { var tg = document.createElement("i"); tg.textContent = "создатель"; row.appendChild(tg); }
+      lobbyList.appendChild(row);
+    });
+    lobbyPlay.hidden = !canPlay;
+    lobbyWait.hidden = canPlay;
+    lobbyWait.textContent = mp.seenPeer || mp.host ? "Ждём, пока создатель комнаты нажмёт «Играть»…" : "Подключение…";
+    lobbyLeave.textContent = lobbyLeaveArmed ? "Точно? Нажмите ещё раз" : "Выйти из комнаты";
+  }
+  function mpBegin() {
+    if (!mpOn || mp.started) return;
+    mp.started = true; mp.lsig = ""; lobbyEl.hidden = true; started = true; lobbyLeaveArmed = false;
+    for (var k in keys) keys[k] = false;
+    last = performance.now(); mp.sendT = 0;
+    showNotice("Игра началась!");
+  }
+  lobbyPlay.addEventListener("click", function () { if (!mpOn || !mp.host || mp.started) return; gt = 0; mpBegin(); mpTick(0); });
+  function lobbyLeaveClick() {
+    if (!mpOn || mp.started) return;
+    if (!lobbyLeaveArmed && mp.host && mp.others.length) { lobbyLeaveArmed = true; mp.lsig = ""; renderLobby(); return; }
+    lobbyLeaveArmed = false; lobbyEl.hidden = true; toHome();
+  }
+  lobbyLeave.addEventListener("click", lobbyLeaveClick);
   function mpSwitch(toHost) {
     mp.host = toHost; mp.hasSnap = false; mp.lastQ = -1;
     zombies = []; bandits = []; ebullets = []; bullets = []; mp.zmap = {}; mp.bmap = {};
@@ -3062,6 +3148,7 @@ kbd {
       activateNext();
       showNotice("Вы стали хостом: мир ведёт ваш браузер.");
     } else showNotice("Вы подключены к хосту.");
+    mp.lsig = ""; renderLobby();
   }
 
   function buildSnap() {
@@ -3082,7 +3169,7 @@ kbd {
     });
     var ab = activeBase();
     mp.q++;
-    return { q: mp.q, t: Math.round(gt * 10) / 10, h: Math.ceil(houseHp), r: radio, w: won ? 1 : 0, ep: mp.ep, S: S, P: P, O: O, al: ab && ab.alert ? 1 : 0, cc: clearedCount, Z: Z, B: B, E: E };
+    return { q: mp.q, t: Math.round(gt * 10) / 10, h: Math.ceil(houseHp), r: radio, w: won ? 1 : 0, nr: nextRaid, ep: mp.ep, S: S, P: P, O: O, al: ab && ab.alert ? 1 : 0, cc: clearedCount, Z: Z, B: B, E: E };
   }
 
   function applySnap(sn) {
@@ -3090,7 +3177,7 @@ kbd {
     if (mp.lastEp !== null && sn.ep !== mp.lastEp) resetPlayer();
     mp.lastEp = sn.ep;
     var hw = houseHp; houseHp = sn.h;
-    radio = sn.r; clearedCount = sn.cc;
+    radio = sn.r; clearedCount = sn.cc; if (sn.nr) nextRaid = sn.nr;
     for (var i = 0; i < bases.length; i++) {
       var b = bases[i], c = sn.S.charAt(i), pc = sn.P.charAt(i);
       b.state = c === "1" ? "active" : c === "2" ? "cleared" : "idle";
@@ -3166,7 +3253,7 @@ kbd {
       mp.advT = 2;
       try {
         var want = mp.host && mp.meta.pub;
-        if (want) { var ap = mp.lobby.presence({ lb: { r: mp.rname, t: mp.meta.title, n: 1 + mp.others.length, m: mp.meta.max } }); mp.adv = true; if (ap && ap.catch) ap.catch(function () {}); }
+        if (want) { var ap = mp.lobby.presence({ lb: { r: mp.rname, t: mp.meta.title, n: 1 + mp.others.length, m: mp.meta.max, g: mp.started ? 1 : 0 } }); mp.adv = true; if (ap && ap.catch) ap.catch(function () {}); }
         else if (mp.adv) { var bp = mp.lobby.presence({ lb: null }); mp.adv = false; if (bp && bp.catch) bp.catch(function () {}); }
       } catch (_) {}
     }
@@ -3175,8 +3262,8 @@ kbd {
     mp.sendT = 0.16;
     var patch = { f: 1, j: mp.joinT, x: Math.round(player.x), y: Math.round(player.y), d: DIRS.indexOf(player.dir), w: player.weapon,
                   sw: player.swing > 0 ? 1 : 0, mv: player.moving ? 1 : 0, hp: Math.max(0, Math.round(player.health)), dd: dead ? 1 : 0, n: mp.name,
-                  mx: mp.meta.max, pb: mp.meta.pub ? 1 : 0, rt: mp.meta.title };
-    if (mp.host) patch.s = buildSnap();
+                  mx: mp.meta.max, pb: mp.meta.pub ? 1 : 0, rt: mp.meta.title, go: mp.started ? 1 : 0 };
+    if (mp.host && mp.started) patch.s = buildSnap();
     try {
       var pr = mp.room.presence(patch);
       if (pr && pr.catch) pr.catch(function (e) { if (e && e.code === "rate_limited") mp.sendT = 1.5; });
@@ -3240,6 +3327,7 @@ kbd {
   function updateGame(dt, run, hour, c, within, dayNo) {
     var ui = uiOpen();
     if (!mpOn && (dead || ui)) return;
+    if (mpOn && !mp.started) return;
     var live = !dead;
     if (live) {
     player.cd = Math.max(0, player.cd - dt); player.swing = Math.max(0, player.swing - dt);
@@ -3291,6 +3379,7 @@ kbd {
     updateRabbits(dt);
     updateMerchant(dt, dayNo, within);
     updateParts();
+    if (won && !isGuest() && nextRaid > 0 && dayNo >= nextRaid) raidRefresh(dayNo);
     if (!isGuest() && !won && radio >= RADIO_TOTAL && dayNo - 1 >= WIN_DAYS) { win(dayNo); return; }
     if (!endedNote && !won && dayNo - 1 >= WIN_DAYS && radio < RADIO_TOTAL) { endedNote = true; showNotice(WIN_DAYS + " суток прожито, но радио не собрано: найдите оставшиеся части в лагерях бандитов."); }
 
@@ -3312,15 +3401,15 @@ kbd {
     if (ab) {
       var tdx = ab.x - player.x, tdy = ab.y - player.y, alive = 0;
       bandits.forEach(function (q) { if (!q.dead) alive++; });
-      tt = "Цель: база " + (clearedCount + 1) + " из " + bases.length + " — " + Math.round(Math.hypot(tdx, tdy) / M) + " м " +
+      tt = (won ? "Лагерь бандитов — " : "Цель: база " + (clearedCount + 1) + " из " + bases.length + " — ") + Math.round(Math.hypot(tdx, tdy) / M) + " м " +
         ARROWS[(Math.round(Math.atan2(tdy, tdx) / 0.7854) + 8) % 8] + " · бандитов: " + alive;
-    } else tt = "Все базы зачищены: " + clearedCount + " из " + bases.length;
+    } else tt = won ? "Лагеря зачищены — новые бандиты через " + Math.max(0, nextRaid - curDay) + " сут." : "Все базы зачищены: " + clearedCount + " из " + bases.length;
     var pp = pendingPart();
     if (pp) {
       var pdx = pp.x - player.x, pdy = pp.y - player.y;
       tt = "Часть радио: " + (RADIO_NAMES[pp.idx] || "деталь") + " — " + Math.round(Math.hypot(pdx, pdy) / M) + " м " + ARROWS[(Math.round(Math.atan2(pdy, pdx) / 0.7854) + 8) % 8];
     }
-    var gl = "Радио " + radio + "/" + RADIO_TOTAL + " · суток " + Math.min(WIN_DAYS, Math.max(0, curDay - 1)) + "/" + WIN_DAYS + (mpOn ? " · игроков " + (1 + mp.others.length) + "/" + mp.meta.max + (mp.code ? " · код " + mp.code : "") + (mp.room ? (mp.host ? " (хост)" : "") : " (подключение…)") : "");
+    var gl = (won ? "Продолжение после победы · сутки " + curDay : "Радио " + radio + "/" + RADIO_TOTAL + " · суток " + Math.min(WIN_DAYS, Math.max(0, curDay - 1)) + "/" + WIN_DAYS) + (mpOn ? " · игроков " + (1 + mp.others.length) + "/" + mp.meta.max + (mp.code ? " · код " + mp.code : "") + (mp.room ? (mp.host ? " (хост)" : "") : " (подключение…)") : "");
     if (gl !== lastGoal) { lastGoal = gl; goalEl.textContent = gl; }
     if (tt !== lastTarget) { lastTarget = tt; targetEl.textContent = tt; }
     hurtEl.style.opacity = dead ? 0.55 : Math.min(1, hurtFlash * 2.5);
@@ -3354,7 +3443,7 @@ kbd {
   var last = performance.now(), items = [];
   function frame(now) {
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (mpOn || (!dead && !uiOpen())) gt += dt;
+    if ((mpOn && mp.started) || (!mpOn && !dead && !uiOpen())) gt += dt;
     if (isGuest()) mpSyncClock(dt);
     mpTick(dt);
     var c = gt + START_T, within = c % CYCLE, dayNo = Math.floor(c / CYCLE) + 1; curDay = dayNo;
