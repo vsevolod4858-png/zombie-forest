@@ -7,6 +7,9 @@
   var URL = window.FOREST_SERVER || (/^https?:$/.test(location.protocol) ? (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws" : "");
   if (!URL || /REPLACE-ME/.test(URL)) return;
 
+  // бесплатный сервер «засыпает»: будим его сразу при запуске, чтобы к моменту входа в комнату он уже работал
+  try { var wakeUrl = URL.replace(/^ws/, "http").replace(/\/ws$/, "/healthz"); if (window.fetch) fetch(wakeUrl, { mode: "no-cors", cache: "no-store" }).catch(function () {}); } catch (_) {}
+
   var ws = null, myId = null, rooms = {}, wantOpen = false, backoff = 600, helloCbs = [], lobbyP = null;
   var LOBBY = "~lobby";
 
@@ -27,7 +30,7 @@
     };
     ws.onclose = function () {
       myId = null; Object.keys(rooms).forEach(function (n) { rooms[n]._drop(); });
-      if (wantOpen) { setTimeout(connect, backoff); backoff = Math.min(8000, backoff * 1.7); }
+      if (wantOpen) { setTimeout(connect, backoff); backoff = Math.min(2500, backoff * 1.5); }
     };
     ws.onerror = function () {};
   }
@@ -35,7 +38,7 @@
     return new Promise(function (res, rej) {
       wantOpen = true; connect();
       if (myId) return res();
-      var t = setTimeout(function () { rej({ code: "upstream_error" }); }, 9000);
+      var t = setTimeout(function () { rej({ code: "upstream_error" }); }, 80000);
       helloCbs.push(function () { clearTimeout(t); res(); });
     });
   }
@@ -114,6 +117,7 @@
     return n || "Игрок";
   }
   window.claude = {
+    isShim: true,
     use: function (name) {
       if (name === "room") return getLobby().catch(function () { lobbyP = null; return null; });
       if (name === "user") return Promise.resolve({ me: function () { return Promise.resolve({ id: null, name: userName() }); } });
@@ -519,7 +523,7 @@ kbd {
           <p><kbd>E</kbd> — торговец, <kbd>G</kbd> — ремонт дома, <kbd>H</kbd> — лечение, <kbd>Z</kbd> <kbd>X</kbd> <kbd>C</kbd> — бинт, аптечка, набор.</p>
           <p><kbd>Esc</kbd> или ☰ — пауза и меню. На телефоне: джойстик слева (до упора — бег), справа красная кнопка — удар, синяя — перезарядка, зелёная — лечение.</p></section>
         <section><h3>Шкалы</h3>
-          <p><b>Здоровье</b> — упало до нуля, и вы погибли. Оно медленно восстанавливается, если вы сыты.</p>
+          <p><b>Здоровье</b> — упало до нуля, и вы погибли. Само оно не восстанавливается: лечитесь бинтами и аптечками (<kbd>Z</kbd> <kbd>X</kbd> <kbd>C</kbd> или <kbd>H</kbd>), их продаёт торговец.</p>
           <p><b>Голод</b> — со временем падает, при нуле начинает отнимать здоровье. Ешьте ягоды, грибы, яблоки, мясо кроликов.</p>
           <p><b>Силы</b> — тратятся на бег. Когда кончились, вы выдохлись и идёте шагом, пока не отдохнёте.</p>
           <p><b>Дом</b> — его прочность. Разрушат зомби — игра окончена.</p></section>
@@ -1692,7 +1696,7 @@ kbd {
   var pauseOpen = false, menuOpen = true, winOpen = false, started = false, won = false, nextRaid = 0, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
   var WIN_DAYS = 100, RADIO_TOTAL = 6;
   var mp = { room: null, host: true, myId: null, joinT: 0, others: [], gmap: {}, q: 0, ep: 0, lastEp: null, lastQ: -1, zid: 0, bid: 0, zmap: {}, bmap: {},
-             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, started: false, over: false, again: false, deadT: 0, deadDay: 1, overT: 0, overSec: -1, seenPeer: false, hostId: null, lsig: "", joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
+             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, started: false, slow: false, over: false, again: false, deadT: 0, deadDay: 1, overT: 0, overSec: -1, seenPeer: false, hostId: null, lsig: "", joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
   var mpOn = false, curOwner = null, lastDeath = "", DIRS = ["left", "right", "up", "down"];
   function isGuest() { return mpOn && !mp.host; }
   var RADIO_NAMES = ["антенна", "динамик", "аккумулятор", "передатчик", "тюнер", "микрофон"];
@@ -2955,16 +2959,18 @@ kbd {
     if (mpOn) return false;
     var cl = window.claude;
     if (!cl || !cl.use) { netMsg.textContent = "Сеть недоступна: откройте игру по ссылке в Claude."; return false; }
+    var NOCONN = cl.isShim ? "Не удалось подключиться к серверу. Проверьте интернет и попробуйте ещё раз: после простоя сервер просыпается до минуты." : "Сеть недоступна: нужен доступ к игре с правом «Участник» и открытая страница.";
     mpOn = true; mp.joinT = Date.now(); mp.host = true; mp.others = []; mp.gmap = {}; mp.hasSnap = false; mp.lastEp = null; mp.lastQ = -1; mp.houseWas = 1; mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = ""; mp.over = false; mp.again = false; mp.deadT = 0;
     mp.code = o.code; mp.rname = o.name; mp.creating = !!o.create; mp.joinWait = 0;
     mp.meta = { max: o.create ? o.max : 10, pub: !!o.pub, title: o.title || "" };
-    netMsg.textContent = "Подключение к комнате…";
+    netMsg.textContent = "Подключение к комнате…"; mp.slow = false;
+    setTimeout(function () { if (mpOn && !mp.room) { mp.slow = true; mp.lsig = ""; renderLobby(); } }, 7000);
     cl.use("user").then(function (u) { return u && u.me ? u.me() : null; }).then(function (me) {
       if (me && me.name) mp.name = String(me.name).slice(0, 14);
     }).catch(function () {});
     (mp.lobby ? Promise.resolve(mp.lobby) : cl.use("room")).then(function (r) {
       if (!mpOn) return null;
-      if (!r) { mpFail("Сеть недоступна: нужен доступ к игре с правом «Участник» и открытая страница."); return null; }
+      if (!r) { mpFail(NOCONN); return null; }
       mp.lobby = r;
       return r.join(o.name);
     }).then(function (nr) {
@@ -3021,9 +3027,9 @@ kbd {
     var cl = window.claude;
     if (!cl || !cl.use) { netMsg.textContent = "Сеть недоступна: откройте игру по ссылке в Claude."; return; }
     if (mp.lobby) { if (!mp.lobbyUnsub) mp.lobbyUnsub = mp.lobby.onPeers(renderRooms); renderRooms(); return; }
-    netMsg.textContent = "Подключение к лобби…";
+    netMsg.textContent = cl.isShim ? "Подключение к серверу… если он спал, это займёт до минуты." : "Подключение к лобби…";
     cl.use("room").then(function (r) {
-      if (!r) { netMsg.textContent = "Сеть недоступна: нужен доступ к игре с правом «Участник» и открытая страница."; return; }
+      if (!r) { netMsg.textContent = cl.isShim ? "Не удалось подключиться к серверу. Подождите минуту (он просыпается) и откройте окно заново." : "Сеть недоступна: нужен доступ к игре с правом «Участник» и открытая страница."; return; }
       mp.lobby = r; netMsg.textContent = "";
       if (!netScreen.hidden && !mp.lobbyUnsub) mp.lobbyUnsub = r.onPeers(renderRooms);
       renderRooms();
@@ -3106,11 +3112,11 @@ kbd {
   function renderLobby() {
     if (!mpOn || mp.started) { lobbyEl.hidden = true; return; }
     lobbyEl.hidden = false;
-    var canPlay = mp.host && (mp.creating || mp.seenPeer);
+    var canPlay = mp.host && !!mp.room && (mp.creating || mp.seenPeer);
     var rows = [{ n: mp.name || "Вы", j: mp.joinT, me: true, host: mp.host }], i, o;
     for (i = 0; i < mp.others.length; i++) { o = mp.others[i]; if (o.pr && o.pr.ov) continue; rows.push({ n: o.n || "Игрок", j: o.j || 0, me: false, host: !mp.host && o.peer === mp.hostId }); }
     rows.sort(function (a, b) { return a.j - b.j; });
-    var sig = rows.map(function (r) { return r.n + "|" + (r.host ? 1 : 0) + (r.me ? 1 : 0); }).join(",") + "#" + mp.code + mp.meta.max + (mp.meta.pub ? 1 : 0) + (canPlay ? 1 : 0) + (lobbyLeaveArmed ? 1 : 0) + mp.seenPeer;
+    var sig = rows.map(function (r) { return r.n + "|" + (r.host ? 1 : 0) + (r.me ? 1 : 0); }).join(",") + "#" + mp.code + mp.meta.max + (mp.meta.pub ? 1 : 0) + (canPlay ? 1 : 0) + (lobbyLeaveArmed ? 1 : 0) + mp.seenPeer + (mp.room ? 1 : 0) + (mp.slow ? 1 : 0);
     if (sig === mp.lsig) return;
     mp.lsig = sig;
     lobbyKind.textContent = (mp.meta.pub ? "Публичная" : "Приватная") + " комната" + (mp.meta.title ? " · " + mp.meta.title : "");
@@ -3125,7 +3131,7 @@ kbd {
     });
     lobbyPlay.hidden = !canPlay;
     lobbyWait.hidden = canPlay;
-    lobbyWait.textContent = mp.seenPeer || mp.host ? "Ждём, пока создатель комнаты нажмёт «Играть»…" : "Подключение…";
+    lobbyWait.textContent = !mp.room ? (mp.slow ? "Сервер просыпается, подождите до минуты…" : "Подключение…") : mp.seenPeer || mp.host ? "Ждём, пока создатель комнаты нажмёт «Играть»…" : "Подключение…";
     lobbyLeave.textContent = lobbyLeaveArmed ? "Точно? Нажмите ещё раз" : "Выйти из комнаты";
   }
   function mpBegin() {
@@ -3387,7 +3393,6 @@ kbd {
     // голод и здоровье
     player.hunger = Math.max(0, player.hunger - (0.42 + (player.moving && run ? 0.25 : 0)) * dt);
     if (player.hunger <= 0) { player.health -= 3 * dt; lastDmg = "hunger"; }
-    else if (player.hunger > 50 && player.health < 100 && !(player.bleed > 0)) player.health = Math.min(100, player.health + 1.2 * dt);
 
     if (player.bleed > 0) { player.bleed = Math.max(0, player.bleed - dt); player.health -= 1.4 * dt; }
     if (player.rl > 0) {
