@@ -1692,11 +1692,11 @@ kbd {
   var pauseOpen = false, menuOpen = true, winOpen = false, started = false, won = false, nextRaid = 0, muted = false, radio = 0, lastGoal = "", endedNote = false, newArmed = false;
   var WIN_DAYS = 100, RADIO_TOTAL = 6;
   var mp = { room: null, host: true, myId: null, joinT: 0, others: [], gmap: {}, q: 0, ep: 0, lastEp: null, lastQ: -1, zid: 0, bid: 0, zmap: {}, bmap: {},
-             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, started: false, seenPeer: false, hostId: null, lsig: "", joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
+             sendT: 0, advT: 0, lobby: null, lobbyUnsub: null, adv: false, code: "", rname: "", meta: { max: 10, pub: false, title: "" }, creating: false, started: false, over: false, again: false, deadT: 0, deadDay: 1, overT: 0, overSec: -1, seenPeer: false, hostId: null, lsig: "", joinWait: 0, name: "Игрок", gtT: 0, gtAt: 0, hasSnap: false, unsub: [], houseWas: 1, shotN: 0 };
   var mpOn = false, curOwner = null, lastDeath = "", DIRS = ["left", "right", "up", "down"];
   function isGuest() { return mpOn && !mp.host; }
   var RADIO_NAMES = ["антенна", "динамик", "аккумулятор", "передатчик", "тюнер", "микрофон"];
-  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen || pauseOpen || howBox.hidden === false || (mpOn && !mp.started); }
+  function uiOpen() { return shopOpen || repairOpen || rotatePause || menuOpen || winOpen || pauseOpen || howBox.hidden === false || (mpOn && !mp.started) || mp.over; }
   try { muted = localStorage.getItem("forest.muted") === "1"; } catch (_) {}
   function getBest() { try { return +localStorage.getItem("forest.best") || 0; } catch (_) { return 0; } }
   function setBest(d) { try { if (d > getBest()) localStorage.setItem("forest.best", String(d)); } catch (_) {} }
@@ -2036,7 +2036,7 @@ kbd {
     else if (e.code === "KeyQ" && !uiOpen()) cycleWeapon();
     else if (/^Digit\d$/.test(e.code) && !uiOpen() && !dead) equipNth(e.code === "Digit0" ? 10 : +e.code.charAt(5));
     else if (e.code === "KeyZ" || e.code === "KeyX" || e.code === "KeyC") useMedIdx("ZXC".indexOf(e.code.charAt(3)));
-    else if (e.code === "Escape") { if (shopOpen || repairOpen) { closeShop(); closeRepair(); } else if (!dead) openPause(); }
+    else if (e.code === "Escape") { if (shopOpen || repairOpen) { closeShop(); closeRepair(); } else if (!dead || mpOn) openPause(); }
   });
 
   function addPopup(px, py, text, color) { popups.push({ x: px, y: py, t: 0, text: text, color: color }); }
@@ -2342,7 +2342,7 @@ kbd {
       var r = rabbits[i];
       if (r.dead) continue;
       var dx = r.x - player.x, dy = r.y - player.y, d = Math.hypot(dx, dy), ang, sp;
-      if (d < 95) { ang = Math.atan2(dy, dx) + Math.sin(r.phase * 0.5) * 0.5; sp = 112; }
+      if (d < 95 && !dead) { ang = Math.atan2(dy, dx) + Math.sin(r.phase * 0.5) * 0.5; sp = 112; }
       else {
         r.wT -= dt;
         if (r.wT <= 0) { r.wA = Math.random() * 6.2832; r.wT = 1 + Math.random() * 2.5; r.idle = Math.random() < 0.45; }
@@ -2822,7 +2822,7 @@ kbd {
     pauseNote.textContent = mpOn ? "В сетевой игре мир не останавливается — остальные игроки продолжают играть." : "Игра остановлена.";
   }
   function openPause() {
-    if (dead || winOpen || menuOpen || pauseOpen || (mpOn && !mp.started)) return;
+    if ((dead && !mpOn) || winOpen || menuOpen || pauseOpen || mp.over || (mpOn && !mp.started)) return;
     closeShop(); closeRepair();
     pauseOpen = true; pauseEl.hidden = false; pNewArmed = false; pHomeArmed = false; pauseText();
     for (var k in keys) keys[k] = false;
@@ -2846,10 +2846,12 @@ kbd {
   winCont.addEventListener("click", function () { winOpen = false; winEl.hidden = true; });
   function die(dayNo, reason) {
     dead = true; closeShop(); closeRepair(); if (pauseOpen) closePause(); lastDeath = reason;
+    if (mpOn) { mp.deadDay = dayNo; setBest(dayNo - 1); showNotice("Вы погибли и теперь наблюдаете за игрой: можно ходить, но вас никто не видит и ничего трогать нельзя."); return; }
     var TT = { house: "Дом разрушен", bandit: "Вас убили бандиты", hunger: "Вы умерли от голода", zombie: "Вас убили зомби" };
     overTitle.textContent = TT[reason] || "Вы погибли";
     var RT = { house: "Зомби разрушили дом.", bandit: "Бандиты оказались сильнее.", hunger: "Вы не нашли еды вовремя.", zombie: "Ночь оказалась слишком длинной." };
     overTxt.textContent = (RT[reason] || "") + " Зачищенные лагеря и части радио вернутся в игре заново.";
+    restartBtn.hidden = false; restartBtn.textContent = "Начать заново";
     setBest(dayNo - 1);
     overStats.innerHTML = statsHtml(dayNo);
     overEl.hidden = false;
@@ -2887,7 +2889,7 @@ kbd {
   restartBtn.addEventListener("click", function () {
     started = true;
     if (mpOn) {
-      if (!isGuest() && lastDeath === "house") { resetGame(); mp.ep++; } else resetPlayer();
+      mpAgain();
       return;
     }
     resetGame();
@@ -2953,7 +2955,7 @@ kbd {
     if (mpOn) return false;
     var cl = window.claude;
     if (!cl || !cl.use) { netMsg.textContent = "Сеть недоступна: откройте игру по ссылке в Claude."; return false; }
-    mpOn = true; mp.joinT = Date.now(); mp.host = true; mp.others = []; mp.gmap = {}; mp.hasSnap = false; mp.lastEp = null; mp.lastQ = -1; mp.houseWas = 1; mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = "";
+    mpOn = true; mp.joinT = Date.now(); mp.host = true; mp.others = []; mp.gmap = {}; mp.hasSnap = false; mp.lastEp = null; mp.lastQ = -1; mp.houseWas = 1; mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = ""; mp.over = false; mp.again = false; mp.deadT = 0;
     mp.code = o.code; mp.rname = o.name; mp.creating = !!o.create; mp.joinWait = 0;
     mp.meta = { max: o.create ? o.max : 10, pub: !!o.pub, title: o.title || "" };
     netMsg.textContent = "Подключение к комнате…";
@@ -2990,7 +2992,7 @@ kbd {
     if (room) { try { var lp = room.leave(); if (lp && lp.catch) lp.catch(function () {}); } catch (_) {} }
     if (mp.lobby && mp.adv) { try { var pp = mp.lobby.presence({ lb: null }); if (pp && pp.catch) pp.catch(function () {}); } catch (_) {} }
     mp.adv = false; mp.room = null; mp.others = []; mp.gmap = {}; mp.host = true; mp.hasSnap = false; mp.code = ""; mp.joinWait = 0;
-    mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = ""; lobbyEl.hidden = true; lobbyLeaveArmed = false;
+    mp.started = false; mp.seenPeer = false; mp.hostId = null; mp.lsig = ""; lobbyEl.hidden = true; lobbyLeaveArmed = false; mp.over = false; mp.again = false; mp.deadT = 0; overEl.hidden = true;
     if (wasGuest) { resetWorld(); gt = 0; }
   }
 
@@ -3071,12 +3073,13 @@ kbd {
       if (!g) { g = mp.gmap[p.peer] = { peer: p.peer, x: pr.x || CX, y: pr.y || CY, phase: 0, swing: 0, idx: 0 }; }
       g.tx = pr.x || g.x; g.ty = pr.y || g.y; g.dir = DIRS[pr.d] || "down"; g.weapon = pr.w || 0; g.swing = pr.sw ? 0.1 : 0; g.moving = !!pr.mv;
       g.health = pr.hp == null ? 100 : pr.hp; g.dead = !!pr.dd; g.n = pr.n || "Игрок"; g.j = pr.j || 0; g.pr = pr; g.guest = p.guest;
-      others.push(g); cand.push({ id: p.peer, j: g.j, g: g });
+      others.push(g); if (!pr.ov) cand.push({ id: p.peer, j: g.j, g: g });
     }
     var seen = {}; others.forEach(function (o) { seen[o.peer] = 1; });
     Object.keys(mp.gmap).forEach(function (k) { if (!seen[k]) delete mp.gmap[k]; });
     others.forEach(function (o, n) { o.idx = n + 1; });
     mp.others = others; if (others.length) mp.seenPeer = true;
+    if (mp.over) { overNote(); return; }
     var me = { id: mp.myId || "~me", j: mp.joinT }, best = me;
     cand.forEach(function (c) { if (c.j < best.j || (c.j === best.j && c.id < best.id)) best = c; });
     var iAmHost = best === me;
@@ -3105,7 +3108,7 @@ kbd {
     lobbyEl.hidden = false;
     var canPlay = mp.host && (mp.creating || mp.seenPeer);
     var rows = [{ n: mp.name || "Вы", j: mp.joinT, me: true, host: mp.host }], i, o;
-    for (i = 0; i < mp.others.length; i++) { o = mp.others[i]; rows.push({ n: o.n || "Игрок", j: o.j || 0, me: false, host: !mp.host && o.peer === mp.hostId }); }
+    for (i = 0; i < mp.others.length; i++) { o = mp.others[i]; if (o.pr && o.pr.ov) continue; rows.push({ n: o.n || "Игрок", j: o.j || 0, me: false, host: !mp.host && o.peer === mp.hostId }); }
     rows.sort(function (a, b) { return a.j - b.j; });
     var sig = rows.map(function (r) { return r.n + "|" + (r.host ? 1 : 0) + (r.me ? 1 : 0); }).join(",") + "#" + mp.code + mp.meta.max + (mp.meta.pub ? 1 : 0) + (canPlay ? 1 : 0) + (lobbyLeaveArmed ? 1 : 0) + mp.seenPeer;
     if (sig === mp.lsig) return;
@@ -3127,7 +3130,7 @@ kbd {
   }
   function mpBegin() {
     if (!mpOn || mp.started) return;
-    mp.started = true; mp.lsig = ""; lobbyEl.hidden = true; started = true; lobbyLeaveArmed = false;
+    mp.started = true; mp.again = false; mp.lsig = ""; lobbyEl.hidden = true; started = true; lobbyLeaveArmed = false;
     for (var k in keys) keys[k] = false;
     last = performance.now(); mp.sendT = 0;
     showNotice("Игра началась!");
@@ -3139,6 +3142,33 @@ kbd {
     lobbyLeaveArmed = false; lobbyEl.hidden = true; toHome();
   }
   lobbyLeave.addEventListener("click", lobbyLeaveClick);
+  // ----- наблюдатель и новый раунд -----
+  var OVER_WAIT = 20;  // секунд на выбор в окне отряда, потом выход в главное меню
+  function overNote() {
+    if (!mp.over) return;
+    var n = 0; mp.others.forEach(function (o) { if (o.pr && o.pr.ag && !o.pr.ov) n++; });
+    var t = "Весь отряд погиб. «Начать сначала» вернёт вас в комнату ожидания, где соберутся все, кто нажмёт эту кнопку. «В меню» — выход из комнаты." + (n ? " Уже вернулись: " + n + "." : "") + " Если ничего не нажать, через " + Math.max(0, Math.ceil(OVER_WAIT - mp.overT)) + " с вы выйдете в главное меню.";
+    if (overTxt.textContent !== t) overTxt.textContent = t;
+  }
+  function mpOver() {
+    mp.over = true; mp.overT = 0; mp.overSec = -1; mp.sendT = 0; closeShop(); closeRepair(); if (pauseOpen) closePause();
+    for (var k in keys) keys[k] = false;
+    overTitle.textContent = "Отряд погиб";
+    restartBtn.hidden = false; restartBtn.textContent = "Начать сначала";
+    overStats.innerHTML = statsHtml(mp.deadDay || curDay);
+    overNote();
+    overEl.hidden = false;
+    try { restartBtn.focus(); } catch (_) {}
+  }
+  function mpAgain() {
+    if (!mpOn || !mp.over) return;
+    mp.over = false; mp.again = true; overEl.hidden = true;
+    resetGame(); gt = 0;
+    mp.started = false; mp.joinT = Date.now(); mp.hasSnap = false; mp.lastQ = -1; mp.lastEp = null; mp.lsig = ""; mp.hostId = null;
+    mp.sendT = 0; started = true;
+    for (var k in keys) keys[k] = false;
+    mpRefresh(); renderLobby();
+  }
   function mpSwitch(toHost) {
     mp.host = toHost; mp.hasSnap = false; mp.lastQ = -1;
     zombies = []; bandits = []; ebullets = []; bullets = []; mp.zmap = {}; mp.bmap = {};
@@ -3248,12 +3278,23 @@ kbd {
       if (mp.others.length) mp.joinWait = 0;
       else if (performance.now() - mp.joinWait > 4500) { mpFail("Комната с кодом " + mp.code + " не найдена или пуста."); return; }
     }
+    if (mp.started && dead && !mp.over) {
+      var allDead = true, oi, og;
+      for (oi = 0; oi < mp.others.length; oi++) { og = mp.others[oi]; if (!og.dead && og.pr && og.pr.go) { allDead = false; break; } }
+      if (allDead) { mp.deadT += dt; if (mp.deadT > 1.2) mpOver(); } else mp.deadT = 0;
+    } else mp.deadT = 0;
+    if (mp.over) {
+      mp.overT += dt;
+      if (mp.overT >= OVER_WAIT) { showNotice("Вы не выбрали, что делать дальше, — выход в главное меню."); toHome(); return; }
+      var sec = Math.ceil(OVER_WAIT - mp.overT);
+      if (sec !== mp.overSec) { mp.overSec = sec; overNote(); }
+    }
     mp.advT -= dt;
     if (mp.advT <= 0 && mp.lobby) {
       mp.advT = 2;
       try {
         var want = mp.host && mp.meta.pub;
-        if (want) { var ap = mp.lobby.presence({ lb: { r: mp.rname, t: mp.meta.title, n: 1 + mp.others.length, m: mp.meta.max, g: mp.started ? 1 : 0 } }); mp.adv = true; if (ap && ap.catch) ap.catch(function () {}); }
+        if (want) { var ap = mp.lobby.presence({ lb: { r: mp.rname, t: mp.meta.title, n: 1 + mp.others.filter(function (o) { return !(o.pr && o.pr.ov); }).length, m: mp.meta.max, g: mp.started ? 1 : 0 } }); mp.adv = true; if (ap && ap.catch) ap.catch(function () {}); }
         else if (mp.adv) { var bp = mp.lobby.presence({ lb: null }); mp.adv = false; if (bp && bp.catch) bp.catch(function () {}); }
       } catch (_) {}
     }
@@ -3262,7 +3303,7 @@ kbd {
     mp.sendT = 0.16;
     var patch = { f: 1, j: mp.joinT, x: Math.round(player.x), y: Math.round(player.y), d: DIRS.indexOf(player.dir), w: player.weapon,
                   sw: player.swing > 0 ? 1 : 0, mv: player.moving ? 1 : 0, hp: Math.max(0, Math.round(player.health)), dd: dead ? 1 : 0, n: mp.name,
-                  mx: mp.meta.max, pb: mp.meta.pub ? 1 : 0, rt: mp.meta.title, go: mp.started ? 1 : 0 };
+                  mx: mp.meta.max, pb: mp.meta.pub ? 1 : 0, rt: mp.meta.title, go: mp.started ? 1 : 0, ov: mp.over ? 1 : 0, ag: mp.again ? 1 : 0 };
     if (mp.host && mp.started) patch.s = buildSnap();
     try {
       var pr = mp.room.presence(patch);
@@ -3411,8 +3452,9 @@ kbd {
     }
     var gl = (won ? "Продолжение после победы · сутки " + curDay : "Радио " + radio + "/" + RADIO_TOTAL + " · суток " + Math.min(WIN_DAYS, Math.max(0, curDay - 1)) + "/" + WIN_DAYS) + (mpOn ? " · игроков " + (1 + mp.others.length) + "/" + mp.meta.max + (mp.code ? " · код " + mp.code : "") + (mp.room ? (mp.host ? " (хост)" : "") : " (подключение…)") : "");
     if (gl !== lastGoal) { lastGoal = gl; goalEl.textContent = gl; }
+    if (dead && mpOn) tt = mp.over ? "" : "Вы наблюдатель: можно ходить, но вас не видят и трогать ничего нельзя";
     if (tt !== lastTarget) { lastTarget = tt; targetEl.textContent = tt; }
-    hurtEl.style.opacity = dead ? 0.55 : Math.min(1, hurtFlash * 2.5);
+    hurtEl.style.opacity = dead ? (mpOn ? 0.15 : 0.55) : Math.min(1, hurtFlash * 2.5);
     var sig = [owned.join(""), player.coins, player.weapon, (player.mag[player.weapon] || 0), player.res.join(","), (player.rl > 0 ? 1 : 0), player.wood, player.stone, player.iron, player.meds.join(","), Math.ceil(houseHp)].join("|");
     if (sig !== lastSig) {
       lastSig = sig;
@@ -3460,12 +3502,12 @@ kbd {
     var ax = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0);
     var ay = (keys.KeyS || keys.ArrowDown ? 1 : 0) - (keys.KeyW || keys.ArrowUp ? 1 : 0);
     if (stick.active) { ax += stick.x; ay += stick.y; }
-    if (dead || uiOpen()) { ax = 0; ay = 0; }
+    if ((dead && !mpOn) || uiOpen()) { ax = 0; ay = 0; }
     var len = Math.hypot(ax, ay);
     if (len > 1) { ax /= len; ay /= len; len = 1; }
     var run = (keys.ShiftLeft || keys.ShiftRight || (stick.active && len > 0.92)) && !player.tired && len > 0.05;
     player.running = run;
-    var speed = (run ? 150 : 92) * (player.health < 25 ? 0.8 : 1);
+    var speed = (run ? 150 : 92) * (player.health < 25 && !dead ? 0.8 : 1);
     player.moving = len > 0.05;
     if (player.moving) {
       var nx = player.x + ax * speed * dt, ny = player.y + ay * speed * dt;
@@ -3519,13 +3561,13 @@ kbd {
     if (merchant.state !== "gone") items.push({ y: merchant.y, m: true });
     if (merchant.state === "idle") items.push({ y: STALL.y, stall: true });
     bases.forEach(function (bq) { var q = bq.part; if (q && q.spawned && !q.taken && q.x > x0 && q.x < x1 && q.y > y0 && q.y < y1) items.push({ y: q.y, rp: q }); });
-    for (i = 0; i < mp.others.length; i++) items.push({ y: mp.others[i].y, op: mp.others[i] });
+    for (i = 0; i < mp.others.length; i++) if (!mp.others[i].dead) items.push({ y: mp.others[i].y, op: mp.others[i] });
     items.push({ y: HB, house: true });
     items.push({ y: player.y, player: true });
     items.sort(function (a, b) { return a.y - b.y; });
     for (i = 0; i < items.length; i++) {
       var it = items[i];
-      if (it.op) drawOther(it.op, now); else if (it.rp) drawRadioPart(it.rp, now); else if (it.house) drawHouse(now); else if (it.player) drawPlayer(now); else if (it.z) drawZombie(it.z, now); else if (it.m) drawMerchant(now); else if (it.stall) drawStall(); else if (it.b) drawBush(it.b); else if (it.n) drawNode(it.n, now); else if (it.mu) drawMushroom(it.mu); else if (it.r) drawRabbit(it.r); else if (it.cp) drawProp(it.cp, now); else if (it.bd) drawBandit(it.bd, now); else drawTree(it.t, now);
+      if (it.op) drawOther(it.op, now); else if (it.rp) drawRadioPart(it.rp, now); else if (it.house) drawHouse(now); else if (it.player) { if (dead && mpOn) { ctx.save(); ctx.globalAlpha = 0.4; drawPlayer(now); ctx.restore(); } else drawPlayer(now); } else if (it.z) drawZombie(it.z, now); else if (it.m) drawMerchant(now); else if (it.stall) drawStall(); else if (it.b) drawBush(it.b); else if (it.n) drawNode(it.n, now); else if (it.mu) drawMushroom(it.mu); else if (it.r) drawRabbit(it.r); else if (it.cp) drawProp(it.cp, now); else if (it.bd) drawBandit(it.bd, now); else drawTree(it.t, now);
     }
     // затемнение по времени суток
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -3578,7 +3620,7 @@ kbd {
     mctx.fillStyle = "#e23a2e";
     zombies.forEach(function (z) { mctx.beginPath(); mctx.arc(z.x * mk, z.y * mk, 4.5, 0, 6.2832); mctx.fill(); });
     mp.others.forEach(function (o) {
-      mctx.fillStyle = o.dead ? "#777" : "#5fb4ff"; mctx.beginPath(); mctx.arc(o.x * mk, o.y * mk, 4.5, 0, 6.2832); mctx.fill();
+      if (o.dead) return; mctx.fillStyle = "#5fb4ff"; mctx.beginPath(); mctx.arc(o.x * mk, o.y * mk, 4.5, 0, 6.2832); mctx.fill();
       mctx.strokeStyle = "#fff"; mctx.lineWidth = 1.5; mctx.stroke();
     });
     mctx.fillStyle = "#f0c05a"; mctx.beginPath(); mctx.arc(player.x * mk, player.y * mk, 5, 0, 6.2832); mctx.fill();
